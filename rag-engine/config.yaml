@@ -1,0 +1,67 @@
+# ============================================================
+# RAG Engine Configuration
+# ============================================================
+# Edit this file to change domains, models, or tuning params.
+# No code changes needed — everything reads from here.
+# ============================================================
+
+# --- Domain Configuration ---
+# Point this at any folder of docs to switch domains.
+# Re-run `python cli.py ingest` after changing.
+domain:
+  name: "networking"
+  docs_path: "domains/networking"
+  # Supported file types for ingestion
+  file_types:
+    - ".md"
+    - ".txt"
+    - ".pdf"
+    - ".html"
+    - ".rst"
+
+# --- Chunking Settings ---
+# These control how documents get split before embedding.
+# Smaller chunks = more precise retrieval but less context per chunk.
+# Larger chunks = more context but noisier retrieval.
+chunking:
+  chunk_size: 768          # tokens per chunk (sweet spot for technical docs)
+  chunk_overlap: 150       # overlap between chunks (prevents cutting mid-concept)
+  separators:              # split priority order
+    - "\n## "              # markdown h2 headers first
+    - "\n### "             # then h3
+    - "\n\n"               # then double newlines (paragraphs)
+    - "\n"                 # then single newlines
+    - " "                  # then spaces (last resort)
+
+# --- Embedding Model ---
+# all-MiniLM-L6-v2: ~80MB, runs on CPU, 384-dim vectors
+# Upgrade path: all-mpnet-base-v2 (768-dim, better quality, ~420MB)
+embedding:
+  model_name: "all-MiniLM-L6-v2"
+  device: "cpu"            # "cpu" for your MacBook, "cuda" if you get a GPU later
+
+# --- Vector Store ---
+# ChromaDB stores embeddings locally. No server needed.
+vector_store:
+  persist_dir: "./chroma_db"
+  collection_name: "rag_docs"
+
+# --- Retrieval Settings ---
+retrieval:
+  top_k: 5                # number of chunks to retrieve
+  use_reranker: false      # enable in Phase 4
+  reranker_model: "cross-encoder/ms-marco-MiniLM-L-6-v2"
+  reranker_top_k: 3        # keep top 3 after re-ranking
+
+# --- Generation (Claude API) ---
+generation:
+  model: "claude-sonnet-4-20250514"   # switch to opus for deeper analysis
+  max_tokens: 2048
+  temperature: 0.3          # low temp = more factual, less creative
+  # Your API key — set as environment variable, NOT here
+  # export ANTHROPIC_API_KEY="sk-ant-..."
+
+# --- Logging ---
+logging:
+  level: "INFO"             # DEBUG for troubleshooting the pipeline itself
+  log_file: "./rag_engine.log"

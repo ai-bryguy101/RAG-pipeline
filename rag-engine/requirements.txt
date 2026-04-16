@@ -1,0 +1,27 @@
+# ============================================================
+# RAG Engine Dependencies
+# ============================================================
+# Install: pip install -r requirements.txt
+# Note: On 2017 Intel MacBook, all of these run fine on CPU.
+# ============================================================
+
+# --- Core ---
+pyyaml>=6.0                  # Config file parsing
+rich>=13.0                   # Pretty terminal output
+
+# --- Phase 1: Ingest ---
+langchain-text-splitters>=0.2  # Smart text chunking
+beautifulsoup4>=4.12          # HTML parsing
+pymupdf>=1.24                 # PDF text extraction (fast, no poppler needed)
+chardet>=5.0                  # Encoding detection
+
+# --- Phase 2: Embed + Store ---
+sentence-transformers>=2.7    # Embedding models (includes PyTorch)
+chromadb>=0.5                 # Vector database
+
+# --- Phase 3: Generate ---
+anthropic>=0.39               # Claude API SDK
+
+# --- Phase 4: Re-rank (optional, install later) ---
+# pip install sentence-transformers  # already included above
+# cross-encoder models download on first use
